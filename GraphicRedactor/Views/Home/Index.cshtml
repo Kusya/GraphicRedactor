@@ -1,0 +1,94 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+@section featured {
+    <section class="featured">
+        <div class="content-wrapper">
+            <hgroup class="title">
+                <h1>@ViewBag.Title.</h1>
+                <h2>@ViewBag.Message</h2>
+            </hgroup>
+
+
+
+        </div>
+    </section>
+}
+<h3>We suggest the following:</h3>
+<link href="@Url.Content("~/Content/Color.Picker.Classic.css")" rel="stylesheet" type="text/css" />
+<link href="@Url.Content("~/Content/sketch.css")" rel="stylesheet" type="text/css" />
+<script src="@Url.Content("~/Scripts/Sketch.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/Event.js")" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/Color.Picker.Classic.js" )" type="text/javascript"></script>
+<script src="@Url.Content("~/Scripts/Color.Space.js" )" type="text/javascript"></script>
+@*<script src="@Url.Content("~/Scripts/jquery-1.8.2.min.js")" type="text/javascript"></script>*@
+<div id="areaDraw" style="max-height:1000px; max-width: 1000px"></div>
+<div class="controls">
+    <input type="button" onclick="sketch.setTool('eraser')" style="" value="Eraser">
+    <input type="button" onclick="sketch.setTool('brush')" style="" value="Brush">
+    <p>
+        <div>
+            <span>Radius</span>
+            <input type="range" onchange="sketch.style.lineWidth = this.value;" value="5" min="1" max="25" title="Radius">
+        </div>
+        <div>
+            <span>Alpha</span>
+            <input type="range" onchange="sketch.style.globalAlpha = parseInt(this.value) / 100;" value="50" min="0" max="100" title="Alpha">
+        </div>
+        <div>
+            <span>Zoom</span>
+            <input type="range" onchange="sketch.zoom = this.value / 100; sketch.redrawFast();" value="100" min="50" max="200" title="Alpha">
+        </div>
+    </p>
+    <input type="button" onclick="sketch.redrawAnimate()" style="" value="Animate">
+    <input type="button" onclick="sketch.redrawFast()" style="" value="Redraw">
+    <input type="button" onclick="sketch.clearRecording()" style="" value="Clear">
+</div>
+<canvas id='mysketch' width='400' height='300'></canvas>
+
+<script type='text/javascript'>
+    //$('#mysketch').sketch();
+</script>
+
+
+<script type="text/javascript">
+
+    Event.add(window, "load", function () {
+        // Saved vector commands (could be compressed).
+        var drawing = [{ "x": 316, "y": 190, "beginPath": true, "tool": "brush", "strokeStyle": "#d009b6", "fillStyle": "#000000", "lineWidth": 5, "lineCap": "round", "lineJoin": "round", "lapse": 0 },
+          { "x": 291, "y": 113, "lapse": 3 }]
+
+        // Initiate sketch widget.
+        sketch = new Sketch({
+            element: document.getElementById("areaDraw"),
+            path: drawing,
+            zoom: 0.75
+        });
+
+        // Listen for the resizing the <canvas> area.
+        Event.add(window, "resize", function () {
+            sketch.resize(100, 100);
+        }).listener();
+
+        // Initiate color picker widget.
+        sketch.picker = new Color.Picker({
+            size: 225,
+            hueWidth: 45,
+            color: "#FF0000",
+            eyedropLayer: sketch.layer[1],
+            eyedropMouseLayer: sketch.layer[2],
+            display: true,
+            callback: function (rgba, state, type, self) {
+                var w3 = Color.Space(rgba, "RGBA>W3");
+                sketch.style.strokeStyle = w3;
+            }
+        });
+    });
+
+    /// Prevent native scrolling in iOS.
+    Event.add(document.body, 'touchmove', Event.prevent);
+
+    /// Prevent right-click on desktops.
+    Event.add(document.body, 'contextmenu', Event.prevent);
+
+</script>
